@@ -1,12 +1,13 @@
-Test task
+### Test task
 
 Develop a C# library (not Web service) that allows to create, view and edit a list of books. Each book has a title, an author, and number of pages. The library should provide following functionality:
 
-Load a list of books from an XML-file;
-Add a new book to the list;
-Sort the list in alphabetical order by author first. Then for each author sort it in alphabetical order by title. Example: first all Andersen's books, then all King's books. Andersen's books: first The Little Mermaid, then The Ugly Duckling etc.;
-Book search by a part of its title (basic, not fuzzy);
-Save the list of books into an XML-file.
+# Load a list of books from an XML-file;
+# Add a new book to the list;
+# Sort the list in alphabetical order by author first. Then for each author sort it in alphabetical order by title. Example: first all Andersen's books, then all King's books. Andersen's books: first The Little Mermaid, then The Ugly Duckling etc.;
+# Book search by a part of its title (basic, not fuzzy);
+# Save the list of books into an XML-file.
+
 The library should be implemented in C#, .NET.
 No UI is required, the library will be used by other software modules.
 The library should be covered with unit tests (any framework of your choice).
