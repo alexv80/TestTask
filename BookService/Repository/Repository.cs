@@ -5,11 +5,11 @@ namespace BooksService.Repository;
 
 internal class Repository : IRepository
 {
-    private readonly List<Book> _books = new List<Book>();
+    private readonly List<Book> _books = new();
 
     public List<Book> GetBooks()
     {
-        return new List<Book>(_books);
+        return new(_books);
     }
 
     public Book? GetBook(string title)
@@ -17,7 +17,7 @@ internal class Repository : IRepository
         return _books.FirstOrDefault(b => b.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
     }
 
-    public List<Book> GetBooksFromXml(string filePath)
+    public async Task<List<Book>> GetBooksFromXmlAsync(string filePath, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path cannot be empty", nameof(filePath));
@@ -25,8 +25,10 @@ internal class Repository : IRepository
         if (!File.Exists(filePath))
             throw new FileNotFoundException("XML file not found", filePath);
 
+        var xmlContent = await File.ReadAllTextAsync(filePath, cancellationToken);
+
         var serializer = new XmlSerializer(typeof(List<Book>));
-        using var reader = new StreamReader(filePath);
+        using var reader = new StringReader(xmlContent);
         try
         {
             var books = (List<Book>) serializer.Deserialize(reader)!;
@@ -74,20 +76,22 @@ internal class Repository : IRepository
             book.Validate();
             _books.Add(book);
         }
-        catch (InvalidOperationException e)
+        catch (InvalidOperationException)
         {
             throw new InvalidOperationException("Book does not pass validation!");
         }
     }
 
-    public void SaveBooksToXml(string filePath)
+    public async Task SaveBooksToXmlAsync(string filePath, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path cannot be empty", nameof(filePath));
 
         var serializer = new XmlSerializer(typeof(List<Book>));
-        using var writer = new StreamWriter(filePath);
+        await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true);
+        await using var writer = new StreamWriter(fileStream);
         serializer.Serialize(writer, _books);
+        await writer.FlushAsync(cancellationToken);
     }
 }
 

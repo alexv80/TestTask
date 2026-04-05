@@ -208,7 +208,7 @@ public class RepositoryTests
     }
 
     [Test]
-    public void SaveBooksToXml_ValidBooks_CreatesFile()
+    public async Task SaveBooksToXml_ValidBooks_CreatesFile()
     {
         // Arrange
         var sut = new BooksService.Repository.Repository();
@@ -219,11 +219,11 @@ public class RepositoryTests
         sut.AddBooks(books);
 
         // Act
-        sut.SaveBooksToXml(_testXmlPath);
+        await sut.SaveBooksToXmlAsync(_testXmlPath);
 
         // Assert
         Assert.That(File.Exists(_testXmlPath), Is.True);
-        var actualBooks = sut.GetBooksFromXml(_testXmlPath);
+        var actualBooks = await sut.GetBooksFromXmlAsync(_testXmlPath);
         Assert.That(actualBooks, Has.Count.EqualTo(3));
         foreach (var book in books)
         {
@@ -238,11 +238,11 @@ public class RepositoryTests
         var sut = new BooksService.Repository.Repository();
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => sut.SaveBooksToXml(""));
+        Assert.ThrowsAsync<ArgumentException>(() => sut.SaveBooksToXmlAsync(""));
     }
 
     [Test]
-    public void GetBooksFromXml_ValidFile_LoadsBooks()
+    public async Task GetBooksFromXml_ValidFile_LoadsBooks()
     {
         // Arrange
         var sut = new BooksService.Repository.Repository();
@@ -250,11 +250,11 @@ public class RepositoryTests
         var book2 = new Book("Carrie", "King", 400);
         var expectedBooks = new List<Book>() {book1, book2};
         sut.AddBooks(expectedBooks);
-        sut.SaveBooksToXml(_testXmlPath);
+        await sut.SaveBooksToXmlAsync(_testXmlPath);
 
         // Act
         var newRepo = new BooksService.Repository.Repository();
-        var books = newRepo.GetBooksFromXml(_testXmlPath);
+        var books = await newRepo.GetBooksFromXmlAsync(_testXmlPath);
 
         // Assert
         Assert.That(books, Has.Count.EqualTo(2));
@@ -271,8 +271,8 @@ public class RepositoryTests
         var sut = new BooksService.Repository.Repository();
 
         // Act & Assert
-        Assert.Throws<FileNotFoundException>(() =>
-            sut.GetBooksFromXml("nonexistent.xml"));
+        Assert.ThrowsAsync<FileNotFoundException>(() =>
+            sut.GetBooksFromXmlAsync("nonexistent.xml"));
     }
 
     [Test]
@@ -282,7 +282,7 @@ public class RepositoryTests
         var sut = new BooksService.Repository.Repository();
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => sut.GetBooksFromXml(""));
+        Assert.ThrowsAsync<ArgumentException>(() => sut.GetBooksFromXmlAsync(""));
     }
 
     [Test]
@@ -293,8 +293,8 @@ public class RepositoryTests
         var sut = new BooksService.Repository.Repository();
 
         // Act & Assert
-        Assert.Throws<InvalidDataException>(() =>
-            sut.GetBooksFromXml(_testXmlPath));
+        Assert.ThrowsAsync<InvalidDataException>(() =>
+            sut.GetBooksFromXmlAsync(_testXmlPath));
     }
     
     private bool AreBooksEqual(Book expected, Book? actual)

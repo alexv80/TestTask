@@ -8,7 +8,7 @@ public interface IRepository
     public Book? GetBook(string title);
     public void AddBooks(List<Book> books);
     public void AddBook(Book book);
-    public void SaveBooksToXml(string filePath);
-    public List<Book> GetBooksFromXml(string filePath);
+    public Task SaveBooksToXmlAsync(string filePath, CancellationToken cancellationToken = default);
+    public Task<List<Book>> GetBooksFromXmlAsync(string filePath, CancellationToken cancellationToken = default);
 }
 

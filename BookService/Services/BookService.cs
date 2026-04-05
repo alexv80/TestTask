@@ -24,12 +24,12 @@ public class BookService
         return _repository.GetBook(title);
     }
 
-    public List<Book> GetBooksFromXml(string filePath)
+    public async Task<List<Book>> GetBooksFromXmlAsync(string filePath, CancellationToken token = default)
     {
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path cannot be empty", nameof(filePath));
 
-        return _repository.GetBooksFromXml(filePath);
+        return await _repository.GetBooksFromXmlAsync(filePath, token);
     }
 
     public void AddBooks(List<Book> books)
@@ -45,12 +45,12 @@ public class BookService
         _repository.AddBook(book);
     }
 
-    public void SaveAllBooksToXml(string filePath)
+    public async Task SaveAllBooksToXmlAsync(string filePath, CancellationToken token = default)
     {
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path cannot be empty", nameof(filePath));
 
-        _repository.SaveBooksToXml(filePath);
+        await _repository.SaveBooksToXmlAsync(filePath, token);
     }
 
     public List<Book> SortBooks()

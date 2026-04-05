@@ -191,19 +191,19 @@ public class BookServiceTests
     }
 
     [Test]
-    public void GetBooksFromXml_ValidPath_CallsRepository()
+    public async Task GetBooksFromXml_ValidPath_CallsRepository()
     {
         // Arrange
         var expectedBooks = new List<Book> { new("Test", "Author", 100) };
-        _mockRepository.Setup(r => r.GetBooksFromXml("test.xml")).Returns(expectedBooks);
+        _mockRepository.Setup(r => r.GetBooksFromXmlAsync("test.xml", It.IsAny<CancellationToken>())).ReturnsAsync(expectedBooks);
         var sut = new BookService(_mockRepository.Object);
 
         // Act
-        var result = sut.GetBooksFromXml("test.xml");
+        var result = await sut.GetBooksFromXmlAsync("test.xml");
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(1));
-        _mockRepository.Verify(r => r.GetBooksFromXml("test.xml"), Times.Once);
+        _mockRepository.Verify(r => r.GetBooksFromXmlAsync("test.xml", It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Test]
@@ -211,21 +211,21 @@ public class BookServiceTests
     {
         // Act & Assert
         var sut = new BookService(_mockRepository.Object);
-        Assert.Throws<ArgumentException>(() => sut.GetBooksFromXml(""));
+        Assert.ThrowsAsync<ArgumentException>(() => sut.GetBooksFromXmlAsync(""));
     }
 
     [Test]
-    public void SaveAllBooksToXml_ValidPath_CallsRepository()
+    public async Task SaveAllBooksToXml_ValidPath_CallsRepository()
     {
         // Arrange
         var filePath = "test_output.xml";
         var sut = new BookService(_mockRepository.Object);
 
         // Act
-        sut.SaveAllBooksToXml(filePath);
+        await sut.SaveAllBooksToXmlAsync(filePath);
 
         // Assert
-        _mockRepository.Verify(r => r.SaveBooksToXml(filePath), Times.Once);
+        _mockRepository.Verify(r => r.SaveBooksToXmlAsync(filePath, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Test]
@@ -233,8 +233,8 @@ public class BookServiceTests
     {
         // Act & Assert
         var sut = new BookService(_mockRepository.Object);
-        Assert.Throws<ArgumentException>(() =>
-            sut.SaveAllBooksToXml(""));
+        Assert.ThrowsAsync<ArgumentException>(() =>
+            sut.SaveAllBooksToXmlAsync(""));
     }
 
     [Test]
@@ -242,7 +242,7 @@ public class BookServiceTests
     {
         // Act & Assert
         var sut = new BookService(_mockRepository.Object);
-        Assert.Throws<ArgumentException>(() =>
-            sut.SaveAllBooksToXml(null!));
+        Assert.ThrowsAsync<ArgumentException>(() =>
+            sut.SaveAllBooksToXmlAsync(null!));
     }
 }
